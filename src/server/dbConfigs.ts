@@ -1,6 +1,6 @@
-import mongoose, {Connection, Mongoose} from 'mongoose';
-import {configs} from './configs';
-import {IConfigs} from "./domain/IConfigs";
+import mongoose, { Connection, Mongoose } from 'mongoose';
+import { configs } from './configs';
+import { IConfigs } from "./domain/IConfigs";
 
 class Database {
     private readonly _config: IConfigs;
@@ -12,19 +12,16 @@ class Database {
     }
 
     dbConnection(): Mongoose {
-        const {mongodb: {url, port, collection, password, username}} = this._config;
-        const mongoURL = (username && password)
-            ? `mongodb://${username}:${password}${url}:${port}/${collection}`
-            : `mongodb://${url}:${port}/${collection}`;
+        const { mongoUrl } = this._config;
         this._mongo
             .connect(
-                mongoURL,
+                mongoUrl,
                 {useNewUrlParser: true, useUnifiedTopology: true}
             );
         const db: Connection = this._mongo.connection;
         db.on('error', console.error.bind(console, 'connection error:'));
         db.once('open', () => {
-            console.log("connected")
+            console.log("DB connected")
         })
         return mongoose;
     }
